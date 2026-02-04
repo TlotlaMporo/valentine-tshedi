@@ -30,17 +30,12 @@
       z-index: 2;
       backdrop-filter: blur(8px);
       animation: fadeIn 1.2s ease;
+      position: relative;
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
@@ -56,12 +51,8 @@
     }
 
     @keyframes glow {
-      from {
-        text-shadow: 0 0 5px #ff4d6d;
-      }
-      to {
-        text-shadow: 0 0 18px #ff4d6d;
-      }
+      from { text-shadow: 0 0 5px #ff4d6d; }
+      to { text-shadow: 0 0 18px #ff4d6d; }
     }
 
     .buttons {
@@ -86,6 +77,7 @@
       left: 50%;
       transform: translateX(-50%);
       box-shadow: 0 0 15px rgba(255, 77, 109, 0.4);
+      z-index: 3;
     }
 
     #noBtn {
@@ -102,6 +94,23 @@
       animation: fadeIn 1.2s ease;
     }
 
+    /* Her picture */
+    #herPic {
+      display: none;
+      width: 200px;
+      height: auto;
+      border-radius: 15px;
+      margin-top: 20px;
+      box-shadow: 0 8px 20px rgba(255,77,109,0.5);
+      animation: fadeIn 1.5s ease, floatPic 3s ease-in-out infinite;
+    }
+
+    @keyframes floatPic {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+
     /* Floating hearts */
     .heart {
       position: absolute;
@@ -112,14 +121,21 @@
     }
 
     @keyframes floatUp {
-      from {
-        transform: translateY(0) scale(1);
-        opacity: 0.7;
-      }
-      to {
-        transform: translateY(-100vh) scale(1.4);
-        opacity: 0;
-      }
+      from { transform: translateY(0) scale(1); opacity: 0.7; }
+      to { transform: translateY(-100vh) scale(1.4); opacity: 0; }
+    }
+
+    /* Burst hearts for Yes button */
+    .burst-heart {
+      position: absolute;
+      font-size: 20px;
+      opacity: 1;
+      animation: burst 0.8s forwards;
+    }
+
+    @keyframes burst {
+      0% { transform: translate(0,0) scale(1); opacity:1; }
+      100% { transform: translate(var(--x), var(--y)) scale(1.5); opacity:0; }
     }
   </style>
 </head>
@@ -127,15 +143,18 @@
 <body>
 
   <!-- Background Music -->
-  <audio autoplay loop>
+  <audio id="bgMusic" loop>
     <source src="https://cdn.pixabay.com/download/audio/2023/03/06/audio_4d4e7e5bb0.mp3" type="audio/mpeg">
   </audio>
 
   <div class="container">
     <h1>
-      Will you be my Valentine,
+      Will you be my Valentine,<br>
       <span class="name">Tshedi</span>? 🥹🫶🏼
     </h1>
+
+    <!-- Her Picture -->
+    <img id="herPic" src="images/tshedi.jpg" alt="Tshedi">
 
     <div class="buttons">
       <button id="yesBtn">Yes ❤️</button>
@@ -169,35 +188,62 @@
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const message = document.getElementById("message");
+    const herPic = document.getElementById("herPic");
     const buttons = document.querySelector(".buttons");
+    const music = document.getElementById("bgMusic");
 
     let scale = 1;
+    let musicPlayed = false;
 
     function moveNoButton() {
       const maxX = buttons.offsetWidth - noBtn.offsetWidth;
       const maxY = buttons.offsetHeight - noBtn.offsetHeight;
-
       const x = Math.random() * maxX;
       const y = Math.random() * maxY;
-
       scale -= 0.06;
-
       noBtn.style.left = x + "px";
       noBtn.style.top = y + "px";
       noBtn.style.transform = `scale(${scale})`;
-
-      if (scale < 0.4) {
-        noBtn.style.display = "none";
-      }
+      if (scale < 0.4) noBtn.style.display = "none";
     }
 
     // Desktop & mobile support
     noBtn.addEventListener("mouseover", moveNoButton);
     noBtn.addEventListener("touchstart", moveNoButton);
 
-    yesBtn.addEventListener("click", () => {
+    // Function to create burst hearts
+    function createBurst(x, y) {
+      for (let i = 0; i < 8; i++) {
+        const heart = document.createElement("div");
+        heart.className = "burst-heart";
+        heart.innerHTML = "❤️";
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = 50 + Math.random() * 50;
+        heart.style.left = x + "px";
+        heart.style.top = y + "px";
+        heart.style.setProperty('--x', distance * Math.cos(angle) + 'px');
+        heart.style.setProperty('--y', distance * Math.sin(angle) + 'px');
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 800);
+      }
+    }
+
+    yesBtn.addEventListener("click", (e) => {
       buttons.style.display = "none";
       message.style.display = "block";
+      herPic.style.display = "block";
+
+      // play music once
+      if (!musicPlayed) {
+        music.play().catch(err => console.log("Audio blocked:", err));
+        musicPlayed = true;
+      }
+
+      // burst hearts at click
+      const rect = yesBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      createBurst(centerX, centerY);
     });
 
     // Floating hearts
@@ -208,7 +254,6 @@
       heart.style.left = Math.random() * 100 + "vw";
       heart.style.animationDuration = Math.random() * 3 + 5 + "s";
       document.body.appendChild(heart);
-
       setTimeout(() => heart.remove(), 8000);
     }, 500);
   </script>
