@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Valentine 🖤</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #1c1c1c, #2a2a2a);
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.65);
+      padding: 40px;
+      border-radius: 25px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      max-width: 430px;
+      width: 90%;
+      z-index: 2;
+      backdrop-filter: blur(8px);
+      animation: fadeIn 1.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .name {
+      color: #ff4d6d;
+      font-weight: bold;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px #ff4d6d;
+      }
+      to {
+        text-shadow: 0 0 18px #ff4d6d;
+      }
+    }
+
+    .buttons {
+      margin-top: 35px;
+      position: relative;
+      height: 90px;
+    }
+
+    button {
+      padding: 12px 32px;
+      font-size: 16px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      position: absolute;
+      transition: 0.25s ease;
+    }
+
+    #yesBtn {
+      background: #ff4d6d;
+      color: white;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 15px rgba(255, 77, 109, 0.4);
+    }
+
+    #noBtn {
+      background: #444;
+      color: #aaa;
+      left: 15%;
+    }
+
+    .message {
+      display: none;
+      font-size: 17px;
+      line-height: 1.75;
+      margin-top: 20px;
+      animation: fadeIn 1.2s ease;
+    }
+
+    /* Floating hearts */
+    .heart {
+      position: absolute;
+      bottom: -20px;
+      font-size: 18px;
+      animation: floatUp linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+      }
+      to {
+        transform: translateY(-100vh) scale(1.4);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Background Music -->
+  <audio autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/06/audio_4d4e7e5bb0.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="container">
+    <h1>
+      Will you be my Valentine,
+      <span class="name">Tshedi</span>? 🥹🫶🏼
+    </h1>
+
+    <div class="buttons">
+      <button id="yesBtn">Yes ❤️</button>
+      <button id="noBtn">No</button>
+    </div>
+
+    <div class="message" id="message">
+      <p>
+        Tshedi,<br><br>
+        I didn’t ask this lightly.
+        I asked it because you matter to me❤️
+        in ways that feel calm, deep and intentional.☺️
+        <br><br>
+        You’ve become someone I think about
+        when things are quiet.
+        Someone whose presence feels like peace
+        not noise.
+        <br><br>
+        I’m not here to rush things or pretend.
+        I’m here because I genuinely want you❤️
+        your mind, your heart, your laughter
+        and the moments in between.
+        <br><br>
+        Thank you for choosing me.
+        I’ll never take that lightly. ❤️
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const message = document.getElementById("message");
+    const buttons = document.querySelector(".buttons");
+
+    let scale = 1;
+
+    function moveNoButton() {
+      const maxX = buttons.offsetWidth - noBtn.offsetWidth;
+      const maxY = buttons.offsetHeight - noBtn.offsetHeight;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      scale -= 0.06;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.transform = `scale(${scale})`;
+
+      if (scale < 0.4) {
+        noBtn.style.display = "none";
+      }
+    }
+
+    // Desktop & mobile support
+    noBtn.addEventListener("mouseover", moveNoButton);
+    noBtn.addEventListener("touchstart", moveNoButton);
+
+    yesBtn.addEventListener("click", () => {
+      buttons.style.display = "none";
+      message.style.display = "block";
+    });
+
+    // Floating hearts
+    setInterval(() => {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.innerHTML = "❤️";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration = Math.random() * 3 + 5 + "s";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 8000);
+    }, 500);
+  </script>
+
+</body>
+</html>
