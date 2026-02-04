@@ -148,7 +148,7 @@
       margin-top: 15px;
       opacity: 0.7;
       animation: bounce 1.5s infinite;
-      display: none; /* initially hidden */
+      display: none;
     }
 
     @keyframes bounce {
@@ -169,7 +169,7 @@
 <body>
 
   <!-- Background Music -->
-  <audio id="bgMusic" loop>
+  <audio id="bgMusic" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2023/03/06/audio_4d4e7e5bb0.mp3" type="audio/mpeg">
   </audio>
 
@@ -257,22 +257,29 @@
       }
     }
 
+    // Play music on first user interaction anywhere
+    function playMusic() {
+      if (!musicPlayed) {
+        music.play().catch(err => console.log("Audio blocked:", err));
+        musicPlayed = true;
+      }
+    }
+
+    document.body.addEventListener("click", playMusic, { once: true });
+    document.body.addEventListener("touchstart", playMusic, { once: true });
+
     yesBtn.addEventListener("click", (e) => {
       buttons.style.display = "none";
       message.style.display = "block";
       herPic.style.display = "block";
 
-      if (!musicPlayed) {
-        music.play().catch(err => console.log("Audio blocked:", err));
-        musicPlayed = true;
-      }
-
+      // burst hearts at click
       const rect = yesBtn.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
       createBurst(centerX, centerY);
 
-      checkScroll(); // show scroll indicator if needed
+      checkScroll();
     });
 
     // Floating hearts
