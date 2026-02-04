@@ -3,30 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <title>Valentine 🖤</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     body {
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       background: linear-gradient(135deg, #1c1c1c, #2a2a2a);
       font-family: 'Segoe UI', sans-serif;
-      overflow: hidden;
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #fff;
+      overflow: auto;
+      padding: 10px;
     }
 
     .container {
       background: rgba(0, 0, 0, 0.65);
-      padding: 40px;
+      padding: 30px 20px;
       border-radius: 25px;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
       text-align: center;
       max-width: 430px;
-      width: 90%;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
       z-index: 2;
       backdrop-filter: blur(8px);
       animation: fadeIn 1.2s ease;
@@ -56,7 +58,7 @@
     }
 
     .buttons {
-      margin-top: 35px;
+      margin-top: 25px;
       position: relative;
       height: 90px;
     }
@@ -97,7 +99,8 @@
     /* Her picture */
     #herPic {
       display: none;
-      width: 200px;
+      width: 100%;
+      max-width: 200px;
       height: auto;
       border-radius: 15px;
       margin-top: 20px;
@@ -136,6 +139,29 @@
     @keyframes burst {
       0% { transform: translate(0,0) scale(1); opacity:1; }
       100% { transform: translate(var(--x), var(--y)) scale(1.5); opacity:0; }
+    }
+
+    /* Scroll indicator */
+    #scrollIndicator {
+      font-size: 14px;
+      color: #ff4d6d;
+      margin-top: 15px;
+      opacity: 0.7;
+      animation: bounce 1.5s infinite;
+      display: none; /* initially hidden */
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 400px) {
+      h1 { font-size: 20px; }
+      .message { font-size: 15px; }
+      .buttons button { font-size: 14px; padding: 10px 24px; }
+      #herPic { max-width: 150px; }
     }
   </style>
 </head>
@@ -182,6 +208,9 @@
         I’ll never take that lightly. ❤️
       </p>
     </div>
+
+    <!-- Scroll indicator -->
+    <div id="scrollIndicator">⬇️ Scroll down</div>
   </div>
 
   <script>
@@ -191,6 +220,8 @@
     const herPic = document.getElementById("herPic");
     const buttons = document.querySelector(".buttons");
     const music = document.getElementById("bgMusic");
+    const container = document.querySelector(".container");
+    const scrollIndicator = document.getElementById("scrollIndicator");
 
     let scale = 1;
     let musicPlayed = false;
@@ -207,11 +238,9 @@
       if (scale < 0.4) noBtn.style.display = "none";
     }
 
-    // Desktop & mobile support
     noBtn.addEventListener("mouseover", moveNoButton);
     noBtn.addEventListener("touchstart", moveNoButton);
 
-    // Function to create burst hearts
     function createBurst(x, y) {
       for (let i = 0; i < 8; i++) {
         const heart = document.createElement("div");
@@ -233,17 +262,17 @@
       message.style.display = "block";
       herPic.style.display = "block";
 
-      // play music once
       if (!musicPlayed) {
         music.play().catch(err => console.log("Audio blocked:", err));
         musicPlayed = true;
       }
 
-      // burst hearts at click
       const rect = yesBtn.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
       createBurst(centerX, centerY);
+
+      checkScroll(); // show scroll indicator if needed
     });
 
     // Floating hearts
@@ -256,6 +285,21 @@
       document.body.appendChild(heart);
       setTimeout(() => heart.remove(), 8000);
     }, 500);
+
+    // Scroll indicator logic
+    function checkScroll() {
+      if (container.scrollHeight > container.clientHeight) {
+        scrollIndicator.style.display = "block";
+      } else {
+        scrollIndicator.style.display = "none";
+      }
+    }
+
+    container.addEventListener("scroll", () => {
+      scrollIndicator.style.display = "none";
+    });
+
+    window.addEventListener("resize", checkScroll);
   </script>
 
 </body>
